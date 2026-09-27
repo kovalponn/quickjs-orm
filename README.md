@@ -1,74 +1,97 @@
-09.27.26 (test_1)
+# quickjs-orm (test_1)
 
-For now, how to build and use a few native function?
+A small test framework built on top of QuickJS, exposing a few native
+C++ functions to JavaScript.
 
-Needs: 
-- Linux/macOS: g++ or clang with C++17, make, git
-- Windows: MSYS2 UCRT64, g++ or clang with C++17, make, git
-(If you got windows, open it ONLY IN MSYS32 UCRT64, not cmd, powershell or other.)
+## Requirements
 
-1.  Download repo
+- **Linux / macOS:** g++ or clang with C++17, make, git
+- **Windows:** MSYS2 UCRT64 with g++ or clang (C++17), make, git
+  > On Windows, run all commands only in the MSYS2 UCRT64 shell —
+  > not in cmd, PowerShell, or any other terminal.
 
+## 1. Clone the repo
+
+```bash
 git clone https://github.com/kovalponn/quickjs-orm.git
 cd quickjs-orm
+```
 
-2. Build quickjs (you need make utility, please use MSYS32 UCRT64)
+## 2. Build QuickJS
 
+```bash
 cd tests/quickJStests/quickjs
 make
-cd ../../.. (back to parent directory)
+```
 
+Then verify the static libraries exist:
+
+```bash
 ls -la tests/quickJStests/quickjs/libquickjs*.a
-must be that:
-- libquickjs.a
-- libquickjs-libc.a
+```
 
-if sth disappears
+You should see:
+- `libquickjs.a`
+- `libquickjs-libc.a`
 
-    2.EXTRA (HAVE NOT libquickjs-libc.a)
+### 2.1 If `libquickjs-libc.a` is missing
 
-    gcc -c -O2 -fPIC -I. quickjs-libc.c -o quickjs-libc.o
-    ar rcs libquickjs-libc.a quickjs-libc.o
-    ls -la libquickjs*.a
-    cd ../../..
+```bash
+gcc -c -O2 -fPIC -I. quickjs-libc.c -o quickjs-libc.o
+ar rcs libquickjs-libc.a quickjs-libc.o
+ls -la libquickjs*.a
+cd ../../..
+```
 
-    2.EXTRA (HAVE NOT libquickjs.a)
+### 2.2 If `libquickjs.a` is missing
 
-    gcc -c -O2 -fPIC -I. -DCONFIG_VERSION=\"$(cat VERSION)\" quickjs.c -o quickjs.o
-    gcc -c -O2 -fPIC -I. libregexp.c  -o libregexp.o
-    gcc -c -O2 -fPIC -I. libunicode.c -o libunicode.o
-    gcc -c -O2 -fPIC -I. cutils.c     -o cutils.o
-    ar rcs libquickjs.a quickjs.o libregexp.o libunicode.o cutils.o
-    cd ../../..
+```bash
+gcc -c -O2 -fPIC -I. -DCONFIG_VERSION=\"$(cat VERSION)\" quickjs.c -o quickjs.o
+gcc -c -O2 -fPIC -I. libregexp.c  -o libregexp.o
+gcc -c -O2 -fPIC -I. libunicode.c -o libunicode.o
+gcc -c -O2 -fPIC -I. cutils.c     -o cutils.o
+ar rcs libquickjs.a quickjs.o libregexp.o libunicode.o cutils.o
+cd ../../..
+```
 
-3. Little chek
+## 3. Quick check
 
+```bash
 ./tests/quickJStests/quickjs/qjs -e "console.log('ok', 1+2)"
+```
 
-4. Build demo example (you need g++)
+## 4. Build the demo example
 
+```bash
 cd tests/quickJStests/_HLTEST
+g++ -O2 -std=c++17 main.cpp -I../quickjs -L../quickjs \
+    -lquickjs-libc -lquickjs -lm -lpthread -o myapp
+```
 
-g++ -O2 -std=c++17 main.cpp -I../quickjs -L../quickjs -lquickjs-libc -lquickjs -lm -lpthread -o myapp.exe
-(just myapp in linux/macos)
+On Windows the output binary will be `myapp.exe`.
 
-5. Start
+## 5. Run
 
+```bash
 ./myapp
+```
 
-6. Almost done, keep script.js near myapp.exe in same directory and write there what you want
-The script.js (~/_HLTEST) file contains a test usage example
-Below i was wrote about almost include libraries, and my native functions
+## 6. Script
 
-AVAILABLE FUNCTIONS AND LIBRARIES:
-    libraries:
-        - qjs (basic JavaScript CLI-utility (console. and other))
-    functions:
-        - test_1:
-            print(str) - console.log full analogue
-            add(a, b) - simple addition of numbers in the range of the C++ int type
-            multiply(a, b) - simple multiplication of numbers within the range of the C++ int type
+Place `script.js` next to the built binary (`myapp` / `myapp.exe`).
+The example `script.js` in `tests/quickJStests/_HLTEST` shows basic usage.
 
-If you want to modify any function, rewrite it in main.cpp (~/_HLTEST) and rebuild the project
+## Available libraries and native functions
 
-Thanks for you attention!; return 0;
+**Libraries**
+- `qjs` — basic JavaScript CLI utility (`console.*` and other)
+
+**Functions (module `test_1`)**
+- `print(str)` — same to `console.log`
+- `add(a, b)` — adds two numbers within C++ `int` range
+- `multiply(a, b)` — multiplies two numbers within C++ `int` range
+
+To modify a function, edit `main.cpp` in `tests/quickJStests/_HLTEST`
+and rebuild the project.
+
+Thanks for your attention! return 0; }

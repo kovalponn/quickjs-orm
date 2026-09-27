@@ -5,18 +5,41 @@ For now, how to build and use a few native function?
 Needs: 
 - Linux/macOS: g++ or clang with C++17, make, git
 - Windows: MSYS2 UCRT64, g++ or clang with C++17, make, git
-(If you got windows, open it ONLY IN MSYS32 UCRT64, not cmd, powershell or other)
+(If you got windows, open it ONLY IN MSYS32 UCRT64, not cmd, powershell or other.)
 
 1.  Download repo
 
-git clone https://github.com/YOU/quickjs-orm.git
+git clone https://github.com/kovalponn/quickjs-orm.git
 cd quickjs-orm
 
-2. Build quickjs (you need make utility)
+2. Build quickjs (you need make utility, please use MSYS32 UCRT64)
 
 cd tests/quickJStests/quickjs
 make
 cd ../../.. (back to parent directory)
+
+ls -la tests/quickJStests/quickjs/libquickjs*.a
+must be that:
+- libquickjs.a
+- libquickjs-libc.a
+
+if sth disappears
+
+    2.EXTRA (HAVE NOT libquickjs-libc.a)
+
+    gcc -c -O2 -fPIC -I. quickjs-libc.c -o quickjs-libc.o
+    ar rcs libquickjs-libc.a quickjs-libc.o
+    ls -la libquickjs*.a
+    cd ../../..
+
+    2.EXTRA (HAVE NOT libquickjs.a)
+
+    gcc -c -O2 -fPIC -I. -DCONFIG_VERSION=\"$(cat VERSION)\" quickjs.c -o quickjs.o
+    gcc -c -O2 -fPIC -I. libregexp.c  -o libregexp.o
+    gcc -c -O2 -fPIC -I. libunicode.c -o libunicode.o
+    gcc -c -O2 -fPIC -I. cutils.c     -o cutils.o
+    ar rcs libquickjs.a quickjs.o libregexp.o libunicode.o cutils.o
+    cd ../../..
 
 3. Little chek
 
@@ -26,12 +49,8 @@ cd ../../.. (back to parent directory)
 
 cd tests/quickJStests/_HLTEST
 
-g++ -O2 -std=c++17 main.cpp \
-    -I../quickjs \
-    -L../quickjs \
-    -lquickjs-libc -lquickjs \
-    -lm -lpthread \
-    -o myapp
+g++ -O2 -std=c++17 main.cpp -I../quickjs -L../quickjs -lquickjs-libc -lquickjs -lm -lpthread -o myapp.exe
+(just myapp in linux/macos)
 
 5. Start
 

@@ -41,7 +41,8 @@ tests/quickJStests/quickjs/tests/bjson.so
 tests/quickJStests/quickjs/test262*
 tests/quickJStests/quickjs/test262o*
 tests/quickJStests/quickjs/microbench*.txt
-──
+
+
 tests/quickJStests/_HLTEST/myapp
 tests/quickJStests/_HLTEST/myapp.exe
 

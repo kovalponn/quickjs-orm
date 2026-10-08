@@ -37,7 +37,7 @@ You should see:
 ### 2.1 If `libquickjs-libc.a` is missing
 
 ```bash
-gcc -c -O2 -fPIC -I. quickjs-libc.c -o quickjs-libc.o
+gcc -c -O2 -fPIC -D_GNU_SOURCE -I. quickjs-libc.c -o quickjs-libc.o
 ar rcs libquickjs-libc.a quickjs-libc.o
 ls -la libquickjs*.a
 cd ../../..
